@@ -1,0 +1,9 @@
+.popup__container_type_registration{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 45px;
+    padding-top: 45px;
+}
