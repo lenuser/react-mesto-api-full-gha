@@ -11,6 +11,6 @@
 
 IP-адрес x.x.x.x
 
-Frontend https://...
+Frontend https://lis.front.nomoredomainsrocks.ru
 
-Backend https://...
+Backend https://lis.back.nomoredomainsrocks.ru
