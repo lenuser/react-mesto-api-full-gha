@@ -89,7 +89,7 @@ class Api {
   }
 }
 const api = new Api({
-  baseUrl: "https://lis.front.nomoredomainsrocks.ru:3000",
+  baseUrl: "https://lis.front.nomoredomainsrocks.ru",
 });
 
 export default api;

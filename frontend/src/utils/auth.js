@@ -1,4 +1,4 @@
-const baseUrl = 'https://lis.front.nomoredomainsrocks.ru:3000'
+const baseUrl = 'https://lis.front.nomoredomainsrocks.ru'
 
 function getResponseData(res){
     return res.ok ? res.json(): Promise.reject(`${res.status} ${res.statusText}`)
