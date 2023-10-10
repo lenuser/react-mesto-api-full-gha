@@ -1,64 +1,73 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const urlRegex = require('../constants/constants');
-const Unauthorized = require('../errors/unauthorized');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    minlength: [2, 'Минимальная длина имени — 2 символа'],
-    maxlength: [30, 'Максимальная — 30 символов'],
-    default: 'Жак-Ив Кусто',
-  },
-  about: {
-    type: String,
-    minlength: [2, 'Минимальная длина поля — 2 символа'],
-    maxlength: [30, 'Максимальная длина поля — 30 символов'],
-    default: 'Исследователь',
-  },
-  avatar: {
-    type: String,
-    validate: {
-      validator(v) {
-        return urlRegex.test(v);
-      },
-      message: 'Некорректная ссылка!',
-    },
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-  },
-  email: {
-    type: String,
-    unique: true,
-    validate: {
-      validator(email) {
-        // validator.isEmail(email);
-        return /^\S+@\S+\.\S+$/.test(email);
-      },
-      message: 'Некорректный e-mail',
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-}, { versionKey: false });
+const { Schema } = mongoose;
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
-  return this.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new Unauthorized('Неправильные почта или пароль');
-      }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new Unauthorized('Неправильные почта или пароль');
-          }
-          return user;
-        });
-    });
-};
+const { urlPattern } = require('../utils/constants');
+
+const userSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: (email) => /.+@.+\..+/.test(email),
+        message: 'Требуется ввести электронный адрес',
+      },
+    },
+
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+
+    name: {
+      type: String,
+      default: 'Жак-Ив Кусто',
+      minlength: [2, 'Минимальная длина поля "name" - 2'],
+      maxlength: [30, 'Максимальная длина поля "name" - 30'],
+    },
+
+    about: {
+      type: String,
+      default: 'Исследователь',
+      minlength: [2, 'Минимальная длина поля "about" - 2'],
+      maxlength: [30, 'Максимальная длина поля "about" - 30'],
+    },
+
+    avatar: {
+      type: String,
+      default:
+        'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      validate: {
+        validator: (url) => urlPattern.test(url),
+        message: 'Требуется ввести URL',
+      },
+    },
+  },
+
+  {
+    versionKey: false,
+    statics: {
+      findUserByCredentials(email, password) {
+        return this.findOne({ email })
+          .select('+password')
+          .then((user) => {
+            if (user) {
+              return bcrypt.compare(password, user.password).then((matched) => {
+                if (matched) return user;
+
+                return Promise.reject();
+              });
+            }
+
+            return Promise.reject();
+          });
+      },
+    },
+  },
+);
 
 module.exports = mongoose.model('user', userSchema);

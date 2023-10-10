@@ -1,17 +1,9 @@
-.header__button{
-    width: 24px;
-    height: 20px;
-    margin: calc(7/320*100%) calc(30/320*100%) 0 0;
-    display: none;
-    background-color: transparent;
-    padding: 0;
-    background-image: url(../../../images/Group5.svg);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-@media screen and (max-width: 767px){
-    .header__button{
-        display: block;
-    }
+.header__button {
+  width: 53px;
+  height: 22px;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #ffffff;
+  background: none;
 }

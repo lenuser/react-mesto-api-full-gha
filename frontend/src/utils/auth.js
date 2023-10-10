@@ -1,43 +1,53 @@
-const baseUrl = 'https://lis.back.nomoredomainsrocks.ru'
+const BASE_URL = "https://lis.back.nomoredomainsrocks.ru"
+//const BASE_URL = "http://localhost:3000"
 
-function getResponseData(res){
-    return res.ok ? res.json(): Promise.reject(`${res.status} ${res.statusText}`)
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json()
+  }
+  return Promise.reject(`${res.status}`)
 }
-//запрос на регистрвцию
-export function registration(password, email){
-    return fetch(`${baseUrl}/signup`, {
-        method: "POST",
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-            password: password,
-            email: email,
-          })
+
+export const registration = (email, password) => {
+  return fetch(`${BASE_URL}/signup`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+    }),
+  }).then(checkResponse)
+}
+
+export const login = (email, password) => {
+  return fetch(`${BASE_URL}/signin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+    }),
+  })
+    .then(checkResponse)
+    .then((data) => {
+      if (data.token) {
+        localStorage.setItem("jwt", data.token)
+        return data
+      }
     })
-    .then(res => getResponseData(res))
 }
-//запрос на авторизацию
-export function authorization(password, email){
-    return fetch(`${baseUrl}/signin`, {
-        method: "POST",
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-            password: password,
-            email: email,
-          })
-    })
-    .then(res => getResponseData(res))
-}
-//запрос на получение данных
-export function getUserData(token){
-    return fetch(`${baseUrl}/users/me`, {
-        method: "GET",
-        headers: {
-            'Content-Type' : 'application/json',
-            'Authorization' : `Bearer ${token}`
-        }})
-    .then(res => getResponseData(res))
+
+export const getUserData = (jwt) => {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwt}`,
+    },
+  }).then(checkResponse)
 }

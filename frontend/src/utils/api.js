@@ -1,95 +1,114 @@
 class Api {
   constructor(options) {
-    this._url = options.baseUrl;
+    this._baseUrl = options.baseUrl
   }
-  // метод который проверяет ответ
+
   _checkResponse(res) {
-    return res.ok ? res.json() : Promise.reject();
-  }
-  //получение профиля
-  getInfo(token) {
-    return fetch(`${this._url}/users/me`, {
-      headers: {
-        'Authorization' : `Bearer ${token}`
-      },
-    }).then(this._checkResponse);
+    if (res.ok) {
+      return Promise.resolve(res.json())
+    }
+
+    return Promise.reject(`Ошибка: ${res.status}`)
   }
 
-  //получение карточек
-  getCards(token) {
-    return fetch(`${this._url}/cards`, {
+  async getInfo() {
+    const response = await fetch(`${this._baseUrl}/users/me`, {
       headers: {
-        'Authorization' : `Bearer ${token}`
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
-    }).then(this._checkResponse);
-  }
-  //кладет информацию о имени и профессии в профиле
-  setUserInfo(data,token) {
-    return fetch(`${this._url}/users/me`, {
-      method: "PATCH",
-      headers: {
-        'Content-Type' : 'application/json',
-        'Authorization' : `Bearer ${token}`
-      },
-      body: JSON.stringify({ name: data.profilename, about: data.profilejob }),
-    }).then(this._checkResponse);
+    })
+    return this._checkResponse(response)
   }
 
-  //аватарка
-  setAvatarNew({ avatar,token }) {
-    return fetch(`${this._url}/users/me/avatar`, {
+  async getCards() {
+    const response = await fetch(`${this._baseUrl}/cards`, {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    return this._checkResponse(response)
+  }
+
+  async setUserInfo(data) {
+    const response = await fetch(`${this._baseUrl}/users/me`, {
       method: "PATCH",
       headers: {
-        'Content-Type' : 'application/json',
-        'Authorization' : `Bearer ${token}`
-      },
-      body: JSON.stringify({ avatar }),
-    }).then(this._checkResponse);
-  }
-  //создание новой карточки
-  addCard(data,token) {
-    return fetch(`${this._url}/cards`, {
-      method: "POST",
-      headers: {
-        'Content-Type' : 'application/json',
-        'Authorization' : `Bearer ${token}`
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
       body: JSON.stringify({
-        name: data.nameCardsInput,
-        link: data.linkCardsInput,
+        name: data.name,
+        about: data.about,
       }),
-    }).then(this._checkResponse);
+    })
+    return this._checkResponse(response)
   }
-  //постановка лайка
-  addLike(cardId,token) {
-    return fetch(`${this._url}/cards/${cardId}/likes`, {
+
+  async addCard(data) {
+    const response = await fetch(`${this._baseUrl}/cards`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify(data),
+    })
+    return this._checkResponse(response)
+  }
+
+  async addLike(cardId) {
+    const response = await fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: "PUT",
       headers: {
-        'Authorization' : `Bearer ${token}`
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
-    }).then(this._checkResponse);
+    })
+    return this._checkResponse(response)
   }
-  //удаление лайка
-  deleteLike(cardId,token) {
-    return fetch(`${this._url}/cards/${cardId}/likes`, {
+
+  async removeCard(cardId) {
+    const response = await fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
       headers: {
-        'Authorization' : `Bearer ${token}`
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
-    }).then(this._checkResponse);
+    })
+    return this._checkResponse(response)
   }
-  //удаление карточки
-  deleteCard(cardId,token) {
-    return fetch(`${this._url}/cards/${cardId}`, {
+
+  async deleteLike(cardId) {
+    const response = await fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: "DELETE",
       headers: {
-        'Authorization' : `Bearer ${token}`
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
-    }).then(this._checkResponse);
+    })
+    return this._checkResponse(response)
+  }
+
+  async setAvatarNew(data) {
+    const response = await fetch(`${this._baseUrl}/users/me/avatar`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({
+        avatar: data.avatar,
+      }),
+    })
+    return this._checkResponse(response)
   }
 }
+
 const api = new Api({
   baseUrl: "https://lis.back.nomoredomainsrocks.ru",
-});
+  //baseUrl: "http://localhost:3000",
+})
 
-export default api;
+export default api

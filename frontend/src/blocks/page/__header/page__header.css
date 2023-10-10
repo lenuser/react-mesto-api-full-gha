@@ -1,23 +1,13 @@
-.page__header{
-    width: 880px;
-    margin: 0 auto;
-    border-bottom: 1px solid rgba(84, 84, 84, 0.7);
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-top: 45px;
-    transition: padding-top .2s linear;
+.page__header {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-@media screen and (max-width: 800px){
-    .page__header{
-        padding-top: 28px;
-        padding-bottom: 28px;
-    }
+
+@media screen and (max-width: 320px) {
+  .page__header {
+    margin: 0;
+  }
 }
-@media screen and (max-width: 320px){
-    .page__header{
-        padding-bottom: 0;
-    }
-}
-    

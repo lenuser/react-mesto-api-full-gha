@@ -9,7 +9,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 51.250.89.223
+IP 51.250.89.223
 
 Frontend https://lis.front.nomoredomainsrocks.ru
 

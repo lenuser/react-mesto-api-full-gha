@@ -1,30 +1,47 @@
-const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
-const urlRegex = require('../constants/constants');
+const router = require("express").Router();
+const { celebrate, Joi } = require("celebrate");
+
+const { urlPattern } = require("../utils/constants");
 const {
-  getUserById, getUsers, updateUser, updateAvatar, getUser,
-} = require('../controllers/users');
+  getUsersInfo,
+  getUserId,
+  getCurrentUserInfo,
+  setUserInfo,
+  setAvatarNew,
+} = require("../controllers/users");
 
-router.get('/', getUsers);
-router.get('/me', getUser);
+router.get("/", getUsersInfo);
+router.get("/me", getCurrentUserInfo);
 
-router.get('/:userId', celebrate({
-  body: Joi.object().keys({
-    userId: Joi.string().length(24).hex().required(),
+router.get(
+  "/:id",
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().length(24).hex().required(),
+    }),
   }),
-}), getUserById);
+  getUserId
+);
 
-router.patch('/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+router.patch(
+  "/me",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+    }),
   }),
-}), updateUser);
+  setUserInfo
+);
 
-router.patch('/me/avatar', celebrate({
-  body: Joi.object().keys({
-    avatar: Joi.string().pattern(urlRegex),
+router.patch(
+  "/me/avatar",
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string().pattern(urlPattern),
+    }),
   }),
-}), updateAvatar);
+  setAvatarNew
+);
 
 module.exports = router;
