@@ -19,6 +19,12 @@ const limiter = ratelimit({
   max: 100,
 });
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(helmet());
 
 app.use(bodyParser.json());
