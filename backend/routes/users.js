@@ -1,47 +1,47 @@
-const router = require("express").Router();
-const { celebrate, Joi } = require("celebrate");
+const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 
-const { urlPattern } = require("../utils/constants");
+const { urlPattern } = require('../utils/constants');
 const {
   getUsersInfo,
   getUserId,
   getCurrentUserInfo,
   setUserInfo,
   setAvatarNew,
-} = require("../controllers/users");
+} = require('../controllers/users');
 
-router.get("/", getUsersInfo);
-router.get("/me", getCurrentUserInfo);
+router.get('/', getUsersInfo);
+router.get('/me', getCurrentUserInfo);
 
 router.get(
-  "/:id",
+  '/:id',
   celebrate({
     params: Joi.object().keys({
       id: Joi.string().length(24).hex().required(),
     }),
   }),
-  getUserId
+  getUserId,
 );
 
 router.patch(
-  "/me",
+  '/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
     }),
   }),
-  setUserInfo
+  setUserInfo,
 );
 
 router.patch(
-  "/me/avatar",
+  '/me/avatar',
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().pattern(urlPattern),
     }),
   }),
-  setAvatarNew
+  setAvatarNew,
 );
 
 module.exports = router;

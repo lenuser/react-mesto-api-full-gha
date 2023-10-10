@@ -1,31 +1,31 @@
-require("dotenv").config();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+require('dotenv').config();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 // Импорты констант статусов ответа сервера из файла
 // constants.js и классовых ошибок из errors
-const { NODE_ENV, AUTH_KEY } = require("../utils/constants");
-const UnauthorizedError = require("../errors/UnauthorizedError");
-const NotFoundError = require("../errors/NotFoundError");
-const ConflictError = require("../errors/ConflictError");
-const BadRequestError = require("../errors/BadRequestError");
+const { NODE_ENV, AUTH_KEY } = require('../utils/constants');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+const NotFoundError = require('../errors/NotFoundError');
+const ConflictError = require('../errors/ConflictError');
+const BadRequestError = require('../errors/BadRequestError');
 
 // Регистрация юзера
 function registration(req, res, next) {
-  const { email, password, name, about, avatar } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
   bcrypt
     .hash(password, 10)
-    .then((hash) =>
-      User.create({
-        email,
-        password: hash,
-        name,
-        about,
-        avatar,
-      })
-    )
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
     .then((user) => {
       const { _id } = user;
 
@@ -41,14 +41,14 @@ function registration(req, res, next) {
       if (err.code === 11000) {
         next(
           new ConflictError(
-            "Пользователь с таким электронным адресом уже зарегистрирован"
-          )
+            'Пользователь с таким электронным адресом уже зарегистрирован',
+          ),
         );
-      } else if (err.name === "ValidationError") {
+      } else if (err.name === 'ValidationError') {
         next(
           new BadRequestError(
-            "Переданы некорректные данные при регистрации пользователя"
-          )
+            'Переданы некорректные данные при регистрации пользователя',
+          ),
         );
       } else {
         next(err);
@@ -65,14 +65,14 @@ function login(req, res, next) {
       if (userId) {
         const token = jwt.sign(
           { userId },
-          NODE_ENV === "production" ? AUTH_KEY : "dev-secret",
-          { expiresIn: "7d" }
+          NODE_ENV === 'production' ? AUTH_KEY : 'dev-secret',
+          { expiresIn: '7d' },
         );
 
         return res.send({ token });
       }
 
-      throw new UnauthorizedError("Неправильные почта или пароль");
+      throw new UnauthorizedError('Неправильные почта или пароль');
     })
     .catch(next);
 }
@@ -93,11 +93,11 @@ function getUserId(req, res, next) {
     .then((user) => {
       if (user) return res.send(user);
 
-      throw new NotFoundError("Пользователь с таким id не найден");
+      throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        next(new BadRequestError("Передан некорректный id"));
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан некорректный id'));
       } else {
         next(err);
       }
@@ -112,11 +112,11 @@ function getCurrentUserInfo(req, res, next) {
     .then((user) => {
       if (user) return res.send(user);
 
-      throw new NotFoundError("Пользователь с таким id не найден");
+      throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        next(new BadRequestError("Передан некорректный id"));
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан некорректный id'));
       } else {
         next(err);
       }
@@ -137,19 +137,19 @@ function setUserInfo(req, res, next) {
     {
       new: true,
       runValidators: true,
-    }
+    },
   )
     .then((user) => {
       if (user) return res.send(user);
 
-      throw new NotFoundError("Пользователь с таким id не найден");
+      throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(
           new BadRequestError(
-            "Переданы некорректные данные при обновлении профиля"
-          )
+            'Переданы некорректные данные при обновлении профиля',
+          ),
         );
       } else {
         next(err);
@@ -170,19 +170,19 @@ function setAvatarNew(req, res, next) {
     {
       new: true,
       runValidators: true,
-    }
+    },
   )
     .then((user) => {
       if (user) return res.send(user);
 
-      throw new NotFoundError("Пользователь с таким id не найден");
+      throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(
           new BadRequestError(
-            "Переданы некорректные данные при обновлении профиля пользователя"
-          )
+            'Переданы некорректные данные при обновлении профиля пользователя',
+          ),
         );
       } else {
         next(err);
